@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>
+Test : creation d'une sphere avec texture
+</title>
+<!-- Include sample javascript library functions-->
+<script type="text/javascript" src="o3djs/base.js"></script>
+
+<!-- Our javascript code -->
+<script type="text/javascript" id="o3dscript">
+o3djs.require('simple');
+
+// Events
+// init() once the page has finished loading.
+window.onload = init;
+
+// global variables
+// we make these global so we can easily access them from the debugger.
+var g_simple;
+var g_cube;
+var g_finished = false;  // for selenium testing
+
+/**
+ * Creates the client area.
+ */
+function init() {
+  o3djs.util.makeClients(initStep2);
+}
+
+/**
+ * Initializes our app.
+ * @param {Array} clientElements Array of o3d object elements.
+ */
+function initStep2(clientElements) {
+  // Initializes global variables and libraries.
+  var o3dElement = clientElements[0];
+
+  // Create an o3djs.simple object to manage things in a simple way.
+  g_simple = o3djs.simple.create(o3dElement);
+
+  // Create a cube.
+  g_sphere = g_simple.createSphere(50,20);
+
+  //g_sphere.setDiffuseColor(1,0,0,1);
+   g_sphere.loadTexture("earthcloudmap.jpg");  // remarque : taille 1024x512 necessaire ?
+
+
+  g_finished = true;  // for selenium testing.
+}
+
+</script>
+</head>
+<body>
+<h1>Test earth</h1>
+Creation d'une sphere avec texture<br/>
+<!-- Start of O3D plugin -->
+<div id="o3d" style="width: 600px; height: 600px;"></div>
+<!-- End of O3D plugin -->
+</body>
+</html>
