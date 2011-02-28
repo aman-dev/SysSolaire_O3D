@@ -1,0 +1,5 @@
+site texture de planéte :
+http://planetpixelemporium.com/earth.html
+
+site tuto O3D :
+http://www.smokycogs.com/blog/tutorials/o3d-tutorials/
