@@ -1,0 +1,1 @@
+ceci marche seulement si installé sur un serveur web
