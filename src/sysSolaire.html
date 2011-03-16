@@ -1,0 +1,355 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd"> 
+<html> 
+<head> 
+<title> 
+Système Solaire
+</title> 
+<style> 
+  html, body {
+      border: 0;
+      margin: 0;
+      height: 100%;
+      height: 100%;
+      text-align: center;
+    }
+</style> 
+</head> 
+<body onload="init();" onunload="uninit();"> 
+<script type="text/javascript" src="lib/o3djs/base.js"></script> 
+<script type="text/javascript" id="o3dscript" src="sysSolaire.js"> </script> 
+<h1>
+Système Solaire
+</h1> 
+<div id="o3d" style="width:70%; height: 70%;"></div> 
+<div style="display:none"> 
+<textarea id="noTexture" name="fx" cols="80" rows="20"> 
+float4x4 worldViewProjection : WorldViewProjection;
+float4x4 world : World;
+float4x4 view : View;
+ 
+float3 sunPos;
+ 
+struct a2v {
+  float4 pos : POSITION;
+  float3 normal : NORMAL;
+};
+ 
+struct v2f {
+  float4 pos : POSITION;
+  float3 normal : TEXCOORD0;
+  float3 sun : TEXCOORD1;
+  float3 view : TEXCOORD2;
+};
+ 
+v2f vsMain(a2v IN) {
+  v2f OUT;
+ 
+  OUT.pos = mul(IN.pos, worldViewProjection);
+  OUT.normal = mul(float4(IN.normal, 0), world).xyz;
+  float3 worldPos = mul(IN.pos, world).xyz;
+  OUT.sun = sunPos - worldPos;
+  OUT.view = (view[3] - worldPos);
+ 
+  return OUT;
+}
+ 
+float4 psMain(v2f IN): COLOR {
+  float3 norm = normalize(IN.normal);
+  float3 sun = normalize(IN.sun);
+  float  light = dot(norm, sun);
+  float  lightSign = sign(light);
+  float  dayNight = 1 - sqrt(light);
+  dayNight = dayNight * dayNight;
+  dayNight = (1 - dayNight) * lightSign;
+  dayNight = clamp(dayNight, 0, 1);
+  float3 view = normalize(IN.view);
+  float3 r = normalize(reflect(norm, sun));
+  float4 litR = lit(light, dot(r, view), 0.0).y;
+  float3 day = float3(0.5, 0.5, 1.0) * litR.y + float3(1,1,1) * litR.z;
+  float3 night = float3(0.2, 0.2, 0.5);
+  return float4(lerp(night, day, dayNight),1);
+}
+ 
+// #o3d VertexShaderEntryPoint vsMain
+// #o3d PixelShaderEntryPoint psMain
+// #o3d MatrixLoadOrder RowMajor
+</textarea> 
+<textarea id="dayOnly" name="fx" cols="80" rows="20"> 
+float4x4 worldViewProjection : WorldViewProjection;
+float4x4 world : World;
+float4x4 view : View;
+ 
+float3 sunPos;
+float mix;
+ 
+sampler2D daySampler;
+ 
+struct a2v {
+  float4 pos : POSITION;
+  float3 normal : NORMAL;
+  float2 uv : TEXCOORD0;
+};
+ 
+struct v2f {
+  float4 pos : POSITION;
+  float2 uv : TEXCOORD0;
+  float3 normal : TEXCOORD1;
+  float3 sun : TEXCOORD2;
+  float3 view : TEXCOORD3;
+};
+ 
+v2f vsMain(a2v IN) {
+  v2f OUT;
+ 
+  OUT.pos = mul(IN.pos, worldViewProjection);
+  OUT.uv = IN.uv;
+  OUT.normal = mul(float4(IN.normal, 0), world).xyz;
+  float3 worldPos = mul(IN.pos, world).xyz;
+  OUT.sun = sunPos - worldPos;
+  OUT.view = (view[3] - worldPos);
+ 
+  return OUT;
+}
+ 
+float4 psMain(v2f IN): COLOR {
+  float3 norm = normalize(IN.normal);
+  float3 sun = normalize(IN.sun);
+  float  light = dot(norm, sun);
+  float  lightSign = sign(light);
+  float  dayNight = 1 - sqrt(light);
+  dayNight = dayNight * dayNight;
+  dayNight = (1 - dayNight) * lightSign;
+  dayNight = clamp(dayNight, 0, 1);
+  float3 view = normalize(IN.view);
+  float3 r = normalize(reflect(norm, sun));
+  float4 litR = lit(light, dot(r, view), 0.0).y;
+  float3 earth = tex2D(daySampler, IN.uv).xyz;
+  float3 day = lerp(float3(0.5, 0.5, 1.0), earth, mix);
+  day = day * litR.y + float3(1,1,1) * litR.z;
+  float3 night = lerp(float3(0.2, 0.2, 0.5), earth * 0.3, mix);
+  return float4(lerp(night, day, dayNight),1);
+}
+ 
+// #o3d VertexShaderEntryPoint vsMain
+// #o3d PixelShaderEntryPoint psMain
+// #o3d MatrixLoadOrder RowMajor
+</textarea> 
+<textarea id="nightAndDay" name="fx" cols="80" rows="20"> 
+float4x4 worldViewProjection : WorldViewProjection;
+float4x4 world : World;
+float4x4 view : View;
+ 
+float3 sunPos;
+float mix;
+ 
+sampler2D daySampler;
+sampler2D nightSampler;
+ 
+struct a2v {
+  float4 pos : POSITION;
+  float3 normal : NORMAL;
+  float2 uv : TEXCOORD0;
+};
+ 
+struct v2f {
+  float4 pos : POSITION;
+  float2 uv : TEXCOORD0;
+  float3 normal : TEXCOORD1;
+  float3 sun : TEXCOORD2;
+  float3 view : TEXCOORD3;
+};
+ 
+v2f vsMain(a2v IN) {
+  v2f OUT;
+ 
+  OUT.pos = mul(IN.pos, worldViewProjection);
+  OUT.uv = IN.uv;
+  OUT.normal = mul(float4(IN.normal, 0), world).xyz;
+  float3 worldPos = mul(IN.pos, world).xyz;
+  OUT.sun = sunPos - worldPos;
+  OUT.view = (view[3] - worldPos);
+ 
+  return OUT;
+}
+ 
+float4 psMain(v2f IN): COLOR {
+  float3 norm = normalize(IN.normal);
+  float3 sun = normalize(IN.sun);
+  float  light = dot(norm, sun);
+  float  lightSign = sign(light);
+  float  dayNight = 1 - sqrt(light);
+  dayNight = dayNight * dayNight;
+  dayNight = (1 - dayNight) * lightSign;
+  dayNight = clamp(dayNight, 0, 1);
+  float3 view = normalize(IN.view);
+  float3 r = normalize(reflect(norm, sun));
+  float4 litR = lit(light, dot(r, view), 0.0).y;
+  float3 earth = tex2D(daySampler, IN.uv).xyz;
+  float3 day = tex2D(daySampler, IN.uv).xyz;
+  float3 night = lerp(day * 0.3, tex2D(nightSampler, IN.uv).xyz, mix);
+  day = day * litR.y + float3(1,1,1) * litR.z;
+  return float4(lerp(night, day, dayNight),1);
+//  return float4(lerp(day, day, day),1);
+}
+ 
+// #o3d VertexShaderEntryPoint vsMain
+// #o3d PixelShaderEntryPoint psMain
+// #o3d MatrixLoadOrder RowMajor
+</textarea> 
+<!--
+This shader renders the ocean different then the non-ocean using a mask
+stored in the alpha channel of the maskSampler
+--> 
+<textarea id="mask" name="fx" cols="80" rows="20"> 
+float4x4 worldViewProjection : WorldViewProjection;
+float4x4 world : World;
+float4x4 view : View;
+ 
+float3 sunPos;
+float mix;
+ 
+sampler2D daySampler;
+sampler2D nightSampler;
+sampler2D maskSampler;
+ 
+struct a2v {
+  float4 pos : POSITION;
+  float3 normal : NORMAL;
+  float2 uv : TEXCOORD0;
+};
+ 
+struct v2f {
+  float4 pos : POSITION;
+  float2 uv : TEXCOORD0;
+  float3 normal : TEXCOORD1;
+  float3 sun : TEXCOORD2;
+  float3 view : TEXCOORD3;
+};
+ 
+v2f vsMain(a2v IN) {
+  v2f OUT;
+ 
+  OUT.pos = mul(IN.pos, worldViewProjection);
+  OUT.uv = IN.uv;
+  OUT.normal = mul(float4(IN.normal, 0), world).xyz;
+  float3 worldPos = mul(IN.pos, world).xyz;
+  OUT.sun = sunPos - worldPos;
+  OUT.view = (view[3] - worldPos);
+ 
+  return OUT;
+}
+ 
+float4 psMain(v2f IN): COLOR {
+  float3 norm = normalize(IN.normal);
+  float3 sun = normalize(IN.sun);
+  float  light = dot(norm, sun);
+  float  lightSign = sign(light);
+  float  dayNight = 1 - sqrt(light);
+  dayNight = dayNight * dayNight;
+  dayNight = (1 - dayNight) * lightSign;
+  dayNight = clamp(dayNight, 0, 1);
+  float3 view = normalize(IN.view);
+  float3 r = normalize(reflect(norm, sun));
+  float4 litR = lit(light, dot(r, view), 0.0).y;
+  float3 earth = tex2D(daySampler, IN.uv).xyz;
+  float4 mask = tex2D(maskSampler, IN.uv);
+  float3 day = lerp(tex2D(daySampler, IN.uv).xyz,
+                    mask.xyz, mix);
+  float3 night = tex2D(nightSampler, IN.uv).xyz;
+  day = day * litR.y + float3(1,1,1) * litR.z * (1 - mask.w * mix);
+ 
+  float3 color = lerp(night, day, dayNight);
+//  float3 color = lerp(day, day, day);
+  return float4(color,1);
+}
+ 
+// #o3d VertexShaderEntryPoint vsMain
+// #o3d PixelShaderEntryPoint psMain
+// #o3d MatrixLoadOrder RowMajor
+</textarea> 
+<textarea id="energy" name="fx" cols="80" rows="20"> 
+float4x4 worldViewProjection : WorldViewProjection;
+ 
+// time is used to scroll the UV coords
+float time;
+ 
+// offset is used to allow each shard to scroll over a different part of the
+// texture.
+float offset;
+ 
+// Sets the color of the shard.
+float4 colorMult;
+ 
+// Provides the dots on the shard.
+sampler2D energySampler;
+ 
+struct a2v {
+  float4 pos : POSITION;
+  float3 norm : NORMAL;
+  float4 color : COLOR;
+  float2 uv : TEXCOORD0;
+};
+ 
+struct v2f {
+  float4 pos : POSITION;
+  float2 uv : TEXCOORD0;
+  float4 color : TEXCOORD1;
+};
+ 
+v2f vsMain(a2v IN) {
+  v2f OUT;
+ 
+  OUT.pos = mul(IN.pos, worldViewProjection);
+  OUT.uv = float2(IN.uv.x, IN.uv.y + time + offset);
+  OUT.color = IN.color;
+ 
+  return OUT;
+}
+ 
+float4 psMain(v2f IN): COLOR {
+  return float4(tex2D(energySampler, IN.uv)) * IN.color * colorMult;
+}
+ 
+// #o3d VertexShaderEntryPoint vsMain
+// #o3d PixelShaderEntryPoint psMain
+// #o3d MatrixLoadOrder RowMajor
+</textarea> 
+<textarea id="atmosphere" name="fx" cols="80" rows="20"> 
+float4x4 worldViewProjection : WorldViewProjection;
+float4x4 worldView : WorldView;
+float3 sunPos;
+float3 eyePos;
+ 
+struct a2v {
+  float4 pos : POSITION;
+  float3 norm : NORMAL;
+};
+ 
+struct v2f {
+  float4 pos : POSITION;
+  float3 normal : TEXCOORD0;
+};
+ 
+v2f vsMain(a2v IN) {
+  v2f OUT;
+ 
+  OUT.pos = mul(IN.pos, worldViewProjection);
+  OUT.normal = normalize(mul(float4(IN.norm,0), worldView).xyz);
+  return OUT;
+}
+ 
+float4 psMain(v2f IN): COLOR {
+  float n = 1 - log(2 * normalize(IN.normal).z);
+  return float4(0.3, 0.3, 1, n * n * n * n);
+}
+ 
+// #o3d VertexShaderEntryPoint vsMain
+// #o3d PixelShaderEntryPoint psMain
+// #o3d MatrixLoadOrder RowMajor
+</textarea> 
+</div> 
+</body> 
+</html> 
+ 
+ 
