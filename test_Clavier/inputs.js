@@ -26,11 +26,12 @@
          var g_viewInfo;
          var g_hudViewInfo;
          var g_keyPressDelta = 0.05;
+         var sphereShape;
 
          function createSphere(material) {
-	 	
-		 	myShape = o3djs.primitives.createSphere(g_pack,material, 1,30,10);
-            return myShape;
+        	sphereShape = g_pack.createObject('Chuchu');
+        	sphereShape = o3djs.primitives.createSphere(g_pack,material, 1,30,10);
+            return sphereShape;
          }
 
          function drawText(str) {
