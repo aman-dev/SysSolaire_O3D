@@ -6,7 +6,7 @@
          {
             "id":61,
             "properties":{
-               "name":"sphereShape|phong1"
+               "name":"cubeShape|phong1"
             },
             "custom":{
                "fieldData":[
@@ -220,7 +220,7 @@
          {
             "id":49,
             "properties":{
-               "name":"sphereShape",
+               "name":"cubeShape",
                "elements":[
                   {
                      "ref":63
@@ -233,7 +233,7 @@
          {
             "id":50,
             "properties":{
-               "name":"sphereShape"
+               "name":"cubeShape"
             },
             "custom":{
                "vertexStreams":[
@@ -343,7 +343,7 @@
          {
             "id":43,
             "properties":{
-               "name":"sphere",
+               "name":"cube",
                "shapes":[
                   {
                      "ref":49
@@ -400,7 +400,7 @@
          {
             "id":51,
             "properties":{
-               "name":"sphereShape"
+               "name":"cubeShape"
             },
             "custom":{
                "fieldData":[

@@ -8,6 +8,13 @@ o3djs.require('o3djs.pack');
 o3djs.require('o3djs.arcball');
 o3djs.require('o3djs.scene');
 
+// Events
+// Run the init() function once the page has finished loading.
+// Run the uninit() function when the page has is unloaded.
+window.onload = init;
+window.onunload = uninit;
+
+
 var g_root;
 var g_o3d;
 var g_math;
