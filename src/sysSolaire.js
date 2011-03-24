@@ -160,6 +160,9 @@ function initStep2(clientElements) {
   var effectNames = [
     "noTexture",
     "dayOnly",
+    "dayOnlyEarth",
+    "dayOnlySun",
+    "dayOnlyMoon",
     "nightAndDay",
     "mask",
     "energy",
@@ -194,23 +197,32 @@ function initStep2(clientElements) {
     // Save off the material.
     g.materials.push(material);
   }
-  g.noTextureMaterial = g.materials[0];
-  g.dayOnlyMaterial = g.materials[1];
+  g.noTextureMaterial 		= g.materials[0];
+  g.dayOnlyMaterial 		= g.materials[1];
+  g.dayOnlyMaterialEarth	= g.materials[2];
+  g.dayOnlyMaterialSun 		= g.materials[3];
+  g.dayOnlyMaterialMoon 	= g.materials[4];
  
   // create samplers
   g.samplers = [];
-  for (var ii = 0; ii < 4; ++ii) {
+  for (var ii = 0; ii < 7; ++ii) {
     var sampler = g.pack.createObject('Sampler');
     g.samplers[ii] = sampler;
   }
  
   g.daySampler = g.samplers[0];
-  g.nightSampler = g.samplers[1];
-  g.maskSampler = g.samplers[2];
-  g.energySampler = g.samplers[3];
+  g.daySamplerEarth = g.samplers[1];
+  g.daySamplerSun = g.samplers[2];
+  g.daySamplerMoon = g.samplers[3];
+  g.nightSampler = g.samplers[4];
+  g.maskSampler = g.samplers[5];
+  g.energySampler = g.samplers[6];
  
   // set the material samplers.
   g.dayOnlyMaterial.getParam('daySampler').value = g.daySampler;
+  g.dayOnlyMaterialSun.getParam('daySamplerSun').value = g.daySamplerSun;
+  g.dayOnlyMaterialEarth.getParam('daySamplerEarth').value = g.daySamplerEarth;
+  g.dayOnlyMaterialMoon.getParam('daySamplerMoon').value = g.daySamplerMoon;
  
   // Create energy texture(s)
   {
@@ -245,6 +257,13 @@ function initStep2(clientElements) {
   g.flatToDayCounter.running = false;
   g.dayOnlyMaterial.getParam('mix').bind(
       g.flatToDayCounter.getParam('count'));
+  g.dayOnlyMaterialSun.getParam('mix').bind(
+      g.flatToDayCounter.getParam('count'));
+  g.dayOnlyMaterialEarth.getParam('mix').bind(
+      g.flatToDayCounter.getParam('count'));
+  g.dayOnlyMaterialMoon.getParam('mix').bind(
+      g.flatToDayCounter.getParam('count'));
+      
       // Create a sphere at the origin for the sun.
   var sun = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -297,7 +316,6 @@ function initStep2(clientElements) {
   
     // Setup an onrender callback for animation.
   g.client.setRenderCallback(onrender);
- 
 }
 
 // spin the camera.
@@ -315,7 +333,6 @@ function onrender(renderEvent) {
       [x, y, z],  // eye
       [0, 0, 0],  // target
       [0, 1, 0]); // up
-     
 }
  
 function loadTexture(path, callback) {
@@ -331,24 +348,24 @@ function loadTexture(path, callback) {
  
 function loadDayTextureSun() {
   loadTexture('textures/sunmap.jpg', function(texture) {
-      g.daySampler.texture = texture;
-      g.sunPrimitive.material = g.dayOnlyMaterial;
+      g.daySamplerSun.texture = texture;
+      g.sunPrimitive.material = g.dayOnlyMaterialSun;
       g.flatToDayCounter.running = true;
     });
 }
 
 function loadDayTextureEarth() {
   loadTexture('textures/earthmap1k.jpg', function(texture) {
-      g.daySampler.texture = texture;
-      g.earthPrimitive.material = g.dayOnlyMaterial;
+      g.daySamplerEarth.texture = texture;
+      g.earthPrimitive.material = g.dayOnlyMaterialEarth;
       g.flatToDayCounter.running = true;
     });
 }
 
 function loadDayTextureMoon() {
   loadTexture('textures/crate.jpg', function(texture) {
-      g.daySampler.texture = texture;
-      g.moonPrimitive.material = g.dayOnlyMaterial;
+      g.daySamplerMoon.texture = texture;
+      g.moonPrimitive.material = g.dayOnlyMaterialMoon;
       g.flatToDayCounter.running = true;
     });
 }
