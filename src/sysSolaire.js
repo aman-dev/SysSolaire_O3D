@@ -6,6 +6,8 @@ o3djs.require('o3djs.rendergraph');
 o3djs.require('o3djs.primitives');
 o3djs.require('o3djs.arcball');
 o3djs.require('o3djs.io');
+o3djs.require('o3djs.debug');
+o3djs.require('o3djs.math');
  
 var g = {
   clock:0,
@@ -24,6 +26,15 @@ g.camera = {
 var g_finished = false;  // for selenium.
 var dragging = false;
  
+var earth;
+var sun; 
+var moon; 
+var g_math;
+
+
+var earth_rot;
+var root_earth;
+
 function startDragging(e) {
   g.lastRot = g.thisRot;
   g.aball.click([e.x, e.y]);
@@ -187,6 +198,7 @@ function initStep2(clientElements) {
     // This will create the effects's params on the material.
     effect.createUniformParameters(material);
  
+	
     // Bind the sun position to a global value so we can easily change it
     // globally.
     var sunParam = material.getParam('sunPos');
@@ -265,7 +277,7 @@ function initStep2(clientElements) {
       g.flatToDayCounter.getParam('count'));
       
       // Create a sphere at the origin for the sun.
-  var sun = o3djs.primitives.createSphere(g.pack,
+  sun = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
                                             10,
                                             50,
@@ -278,27 +290,30 @@ function initStep2(clientElements) {
   g.sun = g.pack.createObject('Transform');
   g.sun.addShape(sun);
   g.sun.parent = g.root;
+  
 
+	
    // Create a sphere at the origin for the earth.
-  var earth = o3djs.primitives.createSphere(g.pack,
+  earth = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
                                             5,
                                             50,
                                             50,
-                                            g.math.matrix4.translation([20, 0, 0]));
+                                            //g.math.matrix4.translation([50, 0, 0]));
+											g.math.matrix4.translation([0, 0, 0]));
   // Get a the element so we can set its material later.
   g.earthPrimitive = earth.elements[0];
   g.earth = g.pack.createObject('Transform');
   g.earth.addShape(earth);
   g.earth.parent = g.sun;
-
     // Create a sphere at the origin for the moon.
-  var moon = o3djs.primitives.createSphere(g.pack,
+  moon = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
                                             2,
                                             50,
                                             50,
-                                            g.math.matrix4.translation([30, 0, 0]));
+                                            g.math.matrix4.translation([10, 0, 0]));
+											//g.math.matrix4.translation([0, 0, 0]));
     // Get a the element so we can set its material later.
   g.moonPrimitive = moon.elements[0];
   g.moon = g.pack.createObject('Transform');
@@ -314,7 +329,15 @@ function initStep2(clientElements) {
   loadDayTextureEarth();
   loadDayTextureMoon();
   
-    // Setup an onrender callback for animation.
+  //debug
+  g_debugHelper = o3djs.debug.createDebugHelper(g.client.createPack(),
+                                                g.viewInfo);
+   
+  g_debugHelper.removeAxis(g.client.root);
+  earth_rot = 0;
+  g.earth.translate([0,0,30]);
+  g.earth.rotateX(earth_rot);
+   // Setup an onrender callback for animation.
   g.client.setRenderCallback(onrender);
 }
 
@@ -324,15 +347,26 @@ function onrender(renderEvent) {
   // Get the number of seconds since the last render.
   var elapsedTime = renderEvent.elapsedTime;
   g.clock += elapsedTime * g.timeMult;
- 
+  //earth_rot = Math.sin(g.clock * 0.1);
+  //g.earth.translate([0,0,1]);
   var x = Math.sin(g.clock * 0.1) * 100;
   var z = Math.cos(g.clock * 0.1) * 100;
   //var y = Math.sin(g.clock * 0.2) * 100;
   var y = 1;
+  
+  //g.moon.rotateY(-0.005);
+ // g.earth.rotateX(Math.sin(g.clock*0.001));
+ var r = Math.sin(0.001);
+  g.earth.rotateY(r*1);	//faire tourner la terre sur elle-même
+  g.sun.rotateY(r*2);	//faire tourner tout le systeme solaire
+  g.moon.rotateY(r*4);	//faire tourner la terre autour du soleil
   g.viewInfo.drawContext.view = g.math.matrix4.lookAt(
-      [x, y, z],  // eye
+	  [100,1,100],
+      //[x, y, z],  // eye
       [0, 0, 0],  // target
       [0, 1, 0]); // up
+	  
+  
 }
  
 function loadTexture(path, callback) {
