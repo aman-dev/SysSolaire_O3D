@@ -175,6 +175,13 @@ function initStep2(clientElements) {
     "dayOnlySun",
     "dayOnlyMoon",
     "dayOnlyMercury",
+    "dayOnlyVenus",
+    "dayOnlyMars",
+    "dayOnlyJupiter",
+    "dayOnlySaturne",
+    "dayOnlyUranus",
+    "dayOnlyNeptune",
+    "dayOnlyPluto",
     "nightAndDay",
     "mask",
     "energy",
@@ -216,7 +223,15 @@ function initStep2(clientElements) {
   g.dayOnlyMaterialSun 		= g.materials[3];
   g.dayOnlyMaterialMoon 	= g.materials[4];
   g.dayOnlyMaterialMercury 	= g.materials[5];
- 
+  g.dayOnlyMaterialVenus 	= g.materials[6];
+  g.dayOnlyMaterialMars 	= g.materials[7];
+  g.dayOnlyMaterialJupiter 	= g.materials[8];
+  g.dayOnlyMaterialSaturne 	= g.materials[9];
+  g.dayOnlyMaterialUranus 	= g.materials[10];
+  g.dayOnlyMaterialNeptune 	= g.materials[11];
+  g.dayOnlyMaterialPluto 	= g.materials[12];
+  
+
   // create samplers
   g.samplers = [];
   for (var ii = 0; ii < g.materials.length; ++ii) {
@@ -229,9 +244,17 @@ function initStep2(clientElements) {
   g.daySamplerSun = g.samplers[2];
   g.daySamplerMoon = g.samplers[3];
   g.daySamplerMercury = g.samplers[4];
-  g.nightSampler = g.samplers[5];
-  g.maskSampler = g.samplers[6];
-  g.energySampler = g.samplers[7];
+  g.daySamplerVenus = g.samplers[5];
+  g.daySamplerMars = g.samplers[6];
+  g.daySamplerJupiter = g.samplers[7];
+  g.daySamplerSaturne = g.samplers[8];
+  g.daySamplerUranus = g.samplers[9];
+  g.daySamplerNeptune = g.samplers[10];
+  g.daySamplerPluto = g.samplers[11];
+  
+  g.nightSampler = g.samplers[12];
+  g.maskSampler = g.samplers[15];
+  g.energySampler = g.samplers[14];
  
   // set the material samplers.
   g.dayOnlyMaterial.getParam('daySampler').value = g.daySampler;
@@ -239,6 +262,13 @@ function initStep2(clientElements) {
   g.dayOnlyMaterialEarth.getParam('daySamplerEarth').value = g.daySamplerEarth;
   g.dayOnlyMaterialMoon.getParam('daySamplerMoon').value = g.daySamplerMoon;
   g.dayOnlyMaterialMercury.getParam('daySamplerMercury').value = g.daySamplerMercury;
+  g.dayOnlyMaterialVenus.getParam('daySamplerVenus').value = g.daySamplerVenus;
+  g.dayOnlyMaterialMars.getParam('daySamplerMars').value = g.daySamplerMars;
+  g.dayOnlyMaterialJupiter.getParam('daySamplerJupiter').value = g.daySamplerJupiter;
+  g.dayOnlyMaterialSaturne.getParam('daySamplerSaturne').value = g.daySamplerSaturne;
+  g.dayOnlyMaterialUranus.getParam('daySamplerUranus').value = g.daySamplerUranus;
+  g.dayOnlyMaterialNeptune.getParam('daySamplerNeptune').value = g.daySamplerNeptune;
+  g.dayOnlyMaterialPluto.getParam('daySamplerPluto').value = g.daySamplerPluto;
  
   // Create energy texture(s)
   {
@@ -304,7 +334,7 @@ function initStep2(clientElements) {
    // Create a sphere at the origin for the earth.
   earth = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
-                                            5,
+                                            6,
                                             50,
                                             50,
                                             //g.math.matrix4.translation([50, 0, 0]));
@@ -317,7 +347,7 @@ function initStep2(clientElements) {
     // Create a sphere at the origin for the moon.
   moon = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
-                                            2,
+                                            1,
                                             50,
                                             50,
                                             g.math.matrix4.translation([10, 0, 0]));
@@ -339,9 +369,108 @@ function initStep2(clientElements) {
     // Get a the element so we can set its material later.
   g.mercuryPrimitive = mercury.elements[0];
   g.mercury = g.pack.createObject('Transform');
-  g.mercury.addShape(moon);
+  g.mercury.addShape(mercury);
   g.mercury.parent = g.rootMain;
 
+  // Create a sphere at the origin for the venus.
+  venus = o3djs.primitives.createSphere(g.pack,
+                                            g.noTextureMaterial,
+                                            4,
+                                            50,
+                                            50,
+                                            g.math.matrix4.translation([0, 0, 0]));
+											//g.math.matrix4.translation([0, 0, 0]));
+    // Get a the element so we can set its material later.
+  g.venusPrimitive = venus.elements[0];
+  g.venus = g.pack.createObject('Transform');
+  g.venus.addShape(venus);
+  g.venus.parent = g.rootMain;
+
+  // Create a sphere at the origin for the mars.
+  mars = o3djs.primitives.createSphere(g.pack,
+                                            g.noTextureMaterial,
+                                            5,
+                                            50,
+                                            50,
+                                            g.math.matrix4.translation([0, 0, 0]));
+											//g.math.matrix4.translation([0, 0, 0]));
+    // Get a the element so we can set its material later.
+  g.marsPrimitive = mars.elements[0];
+  g.mars = g.pack.createObject('Transform');
+  g.mars.addShape(mars);
+  g.mars.parent = g.rootMain;
+
+  // Create a sphere at the origin for the jupiter.
+  jupiter = o3djs.primitives.createSphere(g.pack,
+                                            g.noTextureMaterial,
+                                            2,
+                                            50,
+                                            50,
+                                            g.math.matrix4.translation([0, 0, 0]));
+											//g.math.matrix4.translation([0, 0, 0]));
+    // Get a the element so we can set its material later.
+  g.jupiterPrimitive = jupiter.elements[0];
+  g.jupiter = g.pack.createObject('Transform');
+  g.jupiter.addShape(jupiter);
+  g.jupiter.parent = g.rootMain;
+  
+  // Create a sphere at the origin for the saturne.
+  saturne = o3djs.primitives.createSphere(g.pack,
+                                            g.noTextureMaterial,
+                                            20,
+                                            50,
+                                            50,
+                                            g.math.matrix4.translation([0, 0, 0]));
+											//g.math.matrix4.translation([0, 0, 0]));
+    // Get a the element so we can set its material later.
+  g.saturnePrimitive = saturne.elements[0];
+  g.saturne = g.pack.createObject('Transform');
+  g.saturne.addShape(saturne);
+  g.saturne.parent = g.rootMain;
+
+  // Create a sphere at the origin for the uranus.
+  uranus = o3djs.primitives.createSphere(g.pack,
+                                            g.noTextureMaterial,
+                                            15,
+                                            50,
+                                            50,
+                                            g.math.matrix4.translation([0, 0, 0]));
+											//g.math.matrix4.translation([0, 0, 0]));
+    // Get a the element so we can set its material later.
+  g.uranusPrimitive = uranus.elements[0];
+  g.uranus = g.pack.createObject('Transform');
+  g.uranus.addShape(uranus);
+  g.uranus.parent = g.rootMain;
+
+  // Create a sphere at the origin for the neptune.
+  neptune = o3djs.primitives.createSphere(g.pack,
+                                            g.noTextureMaterial,
+                                            15,
+                                            50,
+                                            50,
+                                            g.math.matrix4.translation([0, 0, 0]));
+											//g.math.matrix4.translation([0, 0, 0]));
+    // Get a the element so we can set its material later.
+  g.neptunePrimitive = neptune.elements[0];
+  g.neptune = g.pack.createObject('Transform');
+  g.neptune.addShape(neptune);
+  g.neptune.parent = g.rootMain;
+
+  // Create a sphere at the origin for the pluto.
+  pluto = o3djs.primitives.createSphere(g.pack,
+                                            g.noTextureMaterial,
+                                            3,
+                                            50,
+                                            50,
+                                            g.math.matrix4.translation([0, 0, 0]));
+											//g.math.matrix4.translation([0, 0, 0]));
+    // Get a the element so we can set its material later.
+  g.plutoPrimitive = pluto.elements[0];
+  g.pluto = g.pack.createObject('Transform');
+  g.pluto.addShape(pluto);
+  g.pluto.parent = g.rootMain;
+  
+  
   
   o3djs.event.addEventListener(g.o3dElement, 'mousedown', startDragging);
   o3djs.event.addEventListener(g.o3dElement, 'mousemove', drag);
@@ -352,7 +481,14 @@ function initStep2(clientElements) {
   loadDayTextureEarth();
   loadDayTextureMoon();
   loadDayTextureMercury();
-  
+  loadDayTextureVenus();
+  loadDayTextureMars();
+  loadDayTextureJupiter();
+  loadDayTextureSaturne();
+  loadDayTextureUranus();
+  loadDayTextureNeptune();
+  loadDayTexturePluto();
+      
   //debug
   g_debugHelper = o3djs.debug.createDebugHelper(g.client.createPack(),
                                                 g.viewInfo);
@@ -361,8 +497,16 @@ function initStep2(clientElements) {
   //g_debugHelper.addAxes(g.moon);
   
   //placement des planetes
-  g.earth.translate([0,0,100]);
-  g.mercury.translate([0,0,40]);
+  g.mercury.translate([-10,0,-10]);
+  g.venus.translate([20,0,10]);
+  g.earth.translate([-20,0,20]);
+  g.mars.translate([30,0,-30]);
+  g.jupiter.translate([60,0,30]);
+  g.saturne.translate([-50,0,-40]);
+  g.uranus.translate([70,0,-40]);
+  g.neptune.translate([-20,0,-60]);
+  g.pluto.translate([-40,0,50]);
+  
   
    // Setup an onrender callback for animation.
   g.client.setRenderCallback(onrender);
@@ -383,12 +527,19 @@ function onrender(renderEvent) {
   g.earth.rotateY(r*15);	//faire tourner la terre sur elle-m�me
   g.rootMain.rotateY(r*2);	//faire tourner tout le systeme solaire
   g.moon.rotateY(r*40);	//faire tourner la terre autour du soleil
+  g.mercury.rotateY(r*50);	
+  g.venus.rotateY(r*50);	
+  g.jupiter.rotateY(r*20);	
+  g.saturne.rotateY(r*15);
+  g.uranus.rotateY(r*20);	
+  g.neptune.rotateY(r*30);	
+  g.pluto.rotateY(r*10);	
 
   g.viewInfo.drawContext.view = g.math.matrix4.lookAt(
 	  [100,1,100],
       //[x, y, z],  // eye
       [0, 0, 0],  // target
-      [0, 1, 0]); // up
+      [0, 5, 0]); // up
 	  
   
 }
@@ -429,13 +580,69 @@ function loadDayTextureMoon() {
 }
 
 function loadDayTextureMercury() {
-	  loadTexture('textures/crate.jpg', function(texture) {
-	      g.daySamplermercury.texture = texture;
+	  loadTexture('textures/mercurymap.jpg', function(texture) {
+	      g.daySamplerMercury.texture = texture;
 	      g.mercuryPrimitive.material = g.dayOnlyMaterialMercury;
 	      g.flatToDayCounter.running = true;
 	    });
 }
- 
+
+function loadDayTextureVenus() {
+	  loadTexture('textures/venusmap.jpg', function(texture) {
+	      g.daySamplerVenus.texture = texture;
+	      g.venusPrimitive.material = g.dayOnlyMaterialVenus;
+	      g.flatToDayCounter.running = true;
+	    });
+}
+
+function loadDayTextureMars() {
+	  loadTexture('textures/mars_1k_color.jpg', function(texture) {
+	      g.daySamplerMars.texture = texture;
+	      g.marsPrimitive.material = g.dayOnlyMaterialMars;
+	      g.flatToDayCounter.running = true;
+	    });
+}
+
+function loadDayTextureJupiter() {
+	  loadTexture('textures/jupitermap.jpg', function(texture) {
+	      g.daySamplerJupiter.texture = texture;
+	      g.jupiterPrimitive.material = g.dayOnlyMaterialJupiter;
+	      g.flatToDayCounter.running = true;
+	    });
+}
+
+function loadDayTextureSaturne() {
+	  loadTexture('textures/saturnmap.jpg', function(texture) {
+	      g.daySamplerSaturne.texture = texture;
+	      g.saturnePrimitive.material = g.dayOnlyMaterialSaturne;
+	      g.flatToDayCounter.running = true;
+	    });
+}
+
+function loadDayTextureUranus() {
+	  loadTexture('textures/saturnmap.jpg', function(texture) {
+	      g.daySamplerUranus.texture = texture;
+	      g.uranusPrimitive.material = g.dayOnlyMaterialUranus;
+	      g.flatToDayCounter.running = true;
+	    });
+}
+
+function loadDayTextureNeptune() {
+	  loadTexture('textures/neptunemap.jpg', function(texture) {
+	      g.daySamplerNeptune.texture = texture;
+	      g.neptunePrimitive.material = g.dayOnlyMaterialNeptune;
+	      g.flatToDayCounter.running = true;
+	    });
+}
+
+function loadDayTexturePluto() {
+	  loadTexture('textures/plutomap1k.jpg', function(texture) {
+	      g.daySamplerPluto.texture = texture;
+	      g.plutoPrimitive.material = g.dayOnlyMaterialPluto;
+	      g.flatToDayCounter.running = true;
+	    });
+}
+
 
 function uninit() {
   // TODO: We should clean up any counters that have callbacks here.
