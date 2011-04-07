@@ -311,7 +311,25 @@ function initStep2(clientElements) {
       g.flatToDayCounter.getParam('count'));
   g.dayOnlyMaterialMercury.getParam('mix').bind(
 	      g.flatToDayCounter.getParam('count'));
-      
+  g.dayOnlyMaterialVenus.getParam('mix').bind(
+	      g.flatToDayCounter.getParam('count'));
+  g.dayOnlyMaterialMars.getParam('mix').bind(
+	      g.flatToDayCounter.getParam('count'));
+  g.dayOnlyMaterialJupiter.getParam('mix').bind(
+	      g.flatToDayCounter.getParam('count'));
+  g.dayOnlyMaterialSaturne.getParam('mix').bind(
+	      g.flatToDayCounter.getParam('count'));
+  g.dayOnlyMaterialUranus.getParam('mix').bind(
+	      g.flatToDayCounter.getParam('count'));
+  g.dayOnlyMaterialNeptune.getParam('mix').bind(
+	      g.flatToDayCounter.getParam('count'));
+  g.dayOnlyMaterialPluto.getParam('mix').bind(
+	      g.flatToDayCounter.getParam('count'));
+
+  
+  
+  
+  
   g.rootMain = g.pack.createObject('Transform');
   g.rootMain.parent = g.client.root;
       // Create a sphere at the origin for the sun.
