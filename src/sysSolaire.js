@@ -333,10 +333,12 @@ function initStep2(clientElements) {
   g_debugHelper = o3djs.debug.createDebugHelper(g.client.createPack(),
                                                 g.viewInfo);
    
-  g_debugHelper.removeAxis(g.client.root);
-  earth_rot = 0;
-  g.earth.translate([0,0,30]);
-  g.earth.rotateX(earth_rot);
+  //g_debugHelper.removeAxis(g.client.root);
+  //g_debugHelper.addAxes(g.moon);
+  
+  //placement des planetes
+  g.earth.translate([0,0,80]);
+  
    // Setup an onrender callback for animation.
   g.client.setRenderCallback(onrender);
 }
@@ -347,19 +349,14 @@ function onrender(renderEvent) {
   // Get the number of seconds since the last render.
   var elapsedTime = renderEvent.elapsedTime;
   g.clock += elapsedTime * g.timeMult;
-  //earth_rot = Math.sin(g.clock * 0.1);
-  //g.earth.translate([0,0,1]);
   var x = Math.sin(g.clock * 0.1) * 100;
   var z = Math.cos(g.clock * 0.1) * 100;
   //var y = Math.sin(g.clock * 0.2) * 100;
   var y = 1;
-  
-  //g.moon.rotateY(-0.005);
- // g.earth.rotateX(Math.sin(g.clock*0.001));
- var r = Math.sin(0.001);
+  var r = Math.sin(0.001);
   g.earth.rotateY(r*1);	//faire tourner la terre sur elle-même
   g.sun.rotateY(r*2);	//faire tourner tout le systeme solaire
-  g.moon.rotateY(r*4);	//faire tourner la terre autour du soleil
+  g.moon.rotateY(r*40);	//faire tourner la terre autour du soleil
   g.viewInfo.drawContext.view = g.math.matrix4.lookAt(
 	  [100,1,100],
       //[x, y, z],  // eye
