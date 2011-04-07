@@ -122,25 +122,24 @@ function stopDragging(e) {
 }
  
 function updateViewFromCamera() {
-  var target = g.camera.target;
-  var eye = g.camera.eye;
+//  var target = g.camera.target;
+//  var eye = g.camera.eye;
   var up = [0, 1, 0];
-  g.viewInfo.drawContext.view = g.math.matrix4.lookAt(eye, target, up);
-  g.eyePosParam.value = eye;
+  g.viewInfo.drawContext.view = g.math.matrix4.lookAt(g.camera.eye, g.camera.target, up);
+  g.eyePosParam.value = g.camera.eye;
 }
  
 function scrollMe(e) {
-  if (e.deltaY > 0) {
-    g.camera.eye[0] *= 11 / 12;
-    g.camera.eye[1] *= 11 / 12;
-    g.camera.eye[2] *= 11 / 12;
- 
-  } else {
-    g.camera.eye[0] *= (1 + 1 / 12);
-    g.camera.eye[1] *= (1 + 1 / 12);
-    g.camera.eye[2] *= (1 + 1 / 12);
-  }
-  updateViewFromCamera();
+	  if (e.deltaY) {
+		var t = 1;
+		if (e.deltaY > 0)
+			t = 11 / 12;
+		else
+			t = 13 / 12;
+		g.camera.eye = g.math.lerpVector(g.camera.target, g.camera.eye, t);
+
+		updateViewFromCamera();
+	}
 }
  
 function getURL(path) {
@@ -227,7 +226,6 @@ function initStep2(clientElements) {
  
   g.aball = o3djs.arcball.create(100, 100);
   setClientSize();
- 
   g.client.setRenderCallback(onRender);
  
  
@@ -413,6 +411,8 @@ function initStep2(clientElements) {
   
 
 	
+  g.rootEarth = g.pack.createObject('Transform');
+  g.rootEarth.parent = g.rootMain;
    // Create a sphere at the origin for the earth.
   earth = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -425,7 +425,7 @@ function initStep2(clientElements) {
   g.earthPrimitive = earth.elements[0];
   g.earth = g.pack.createObject('Transform');
   g.earth.addShape(earth);
-  g.earth.parent = g.rootMain;
+  g.earth.parent = g.rootEarth;
     // Create a sphere at the origin for the moon.
   moon = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -440,6 +440,8 @@ function initStep2(clientElements) {
   g.moon.addShape(moon);
   g.moon.parent = g.earth;
 
+  g.rootMercury = g.pack.createObject('Transform');
+  g.rootMercury.parent = g.rootMain;
   // Create a sphere at the origin for the moon.
   mercury = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -452,8 +454,10 @@ function initStep2(clientElements) {
   g.mercuryPrimitive = mercury.elements[0];
   g.mercury = g.pack.createObject('Transform');
   g.mercury.addShape(mercury);
-  g.mercury.parent = g.rootMain;
+  g.mercury.parent = g.rootMercury;
 
+  g.rootVenus = g.pack.createObject('Transform');
+  g.rootVenus.parent = g.rootMain;
   // Create a sphere at the origin for the venus.
   venus = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -466,8 +470,10 @@ function initStep2(clientElements) {
   g.venusPrimitive = venus.elements[0];
   g.venus = g.pack.createObject('Transform');
   g.venus.addShape(venus);
-  g.venus.parent = g.rootMain;
+  g.venus.parent = g.rootVenus;
 
+  g.rootMars = g.pack.createObject('Transform');
+  g.rootMars.parent = g.rootMain;
   // Create a sphere at the origin for the mars.
   mars = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -480,8 +486,10 @@ function initStep2(clientElements) {
   g.marsPrimitive = mars.elements[0];
   g.mars = g.pack.createObject('Transform');
   g.mars.addShape(mars);
-  g.mars.parent = g.rootMain;
+  g.mars.parent = g.rootMars;
 
+  g.rootJupiter = g.pack.createObject('Transform');
+  g.rootJupiter.parent = g.rootMain;
   // Create a sphere at the origin for the jupiter.
   jupiter = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -494,8 +502,10 @@ function initStep2(clientElements) {
   g.jupiterPrimitive = jupiter.elements[0];
   g.jupiter = g.pack.createObject('Transform');
   g.jupiter.addShape(jupiter);
-  g.jupiter.parent = g.rootMain;
+  g.jupiter.parent = g.rootJupiter;
   
+  g.rootSaturne = g.pack.createObject('Transform');
+  g.rootSaturne.parent = g.rootMain;
   // Create a sphere at the origin for the saturne.
   saturne = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -508,8 +518,10 @@ function initStep2(clientElements) {
   g.saturnePrimitive = saturne.elements[0];
   g.saturne = g.pack.createObject('Transform');
   g.saturne.addShape(saturne);
-  g.saturne.parent = g.rootMain;
+  g.saturne.parent = g.rootSaturne;
 
+  g.rootUranus = g.pack.createObject('Transform');
+  g.rootUranus.parent = g.rootMain;
   // Create a sphere at the origin for the uranus.
   uranus = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -522,8 +534,10 @@ function initStep2(clientElements) {
   g.uranusPrimitive = uranus.elements[0];
   g.uranus = g.pack.createObject('Transform');
   g.uranus.addShape(uranus);
-  g.uranus.parent = g.rootMain;
+  g.uranus.parent = g.rootUranus;
 
+  g.rootNeptune = g.pack.createObject('Transform');
+  g.rootNeptune.parent = g.rootMain;
   // Create a sphere at the origin for the neptune.
   neptune = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -532,12 +546,14 @@ function initStep2(clientElements) {
                                             50,
                                             g.math.matrix4.translation([0, 0, 0]));
 											//g.math.matrix4.translation([0, 0, 0]));
-    // Get a the element so we can set its material later.
+  // Get a the element so we can set its material later.
   g.neptunePrimitive = neptune.elements[0];
   g.neptune = g.pack.createObject('Transform');
   g.neptune.addShape(neptune);
-  g.neptune.parent = g.rootMain;
+  g.neptune.parent = g.rootNeptune;
 
+  g.rootPluto = g.pack.createObject('Transform');
+  g.rootPluto.parent = g.rootMain;
   // Create a sphere at the origin for the pluto.
   pluto = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -550,7 +566,7 @@ function initStep2(clientElements) {
   g.plutoPrimitive = pluto.elements[0];
   g.pluto = g.pack.createObject('Transform');
   g.pluto.addShape(pluto);
-  g.pluto.parent = g.rootMain;
+  g.pluto.parent = g.rootPluto;
   
   
   
@@ -579,15 +595,15 @@ function initStep2(clientElements) {
   //g_debugHelper.addAxes(g.moon);
   
   //placement des planetes
-  g.mercury.translate([-10,0,-10]);
-  g.venus.translate([20,0,10]);
-  g.earth.translate([-20,0,20]);
-  g.mars.translate([30,0,-30]);
-  g.jupiter.translate([60,0,30]);
-  g.saturne.translate([-50,0,-40]);
-  g.uranus.translate([70,0,-40]);
-  g.neptune.translate([-20,0,-60]);
-  g.pluto.translate([-40,0,50]);
+  g.mercury.translate([57,0,-20]);
+  g.venus.translate([108,0,20]);
+  g.earth.translate([149,0,30]);
+  g.mars.translate([205,0,-50]);
+  g.jupiter.translate([478,0,50]);
+  g.saturne.translate([599,0,-60]);
+  g.uranus.translate([670,0,-80]);
+  g.neptune.translate([800,0,-120]);
+  g.pluto.translate([900,0,100]);
   
   
    // Setup an onrender callback for animation.
@@ -609,22 +625,33 @@ function onrender(renderEvent) {
   var y = 1;
   var r = Math.sin(0.001);
 
-  g.earth.rotateY(r*15);	//faire tourner la terre sur elle-m�me
   g.rootMain.rotateY(r*2);	//faire tourner tout le systeme solaire
-  g.moon.rotateY(r*40);	//faire tourner la terre autour du soleil
-  g.mercury.rotateY(r*50);	
-  g.venus.rotateY(r*50);	
-  g.jupiter.rotateY(r*20);	
-  g.saturne.rotateY(r*15);
-  g.uranus.rotateY(r*20);	
-  g.neptune.rotateY(r*30);	
-  g.pluto.rotateY(r*10);	
+  g.rootMercury.rotateY(r*31);
+  	g.mercury.rotateY(r*50);	
+  g.rootVenus.rotateY(r*29);
+  	g.venus.rotateY(r*50);	
+  g.rootEarth.rotateY(r*26);
+  	g.earth.rotateY(r*15);	//faire tourner la terre sur elle-m�me
+    g.moon.rotateY(r*40);	//faire tourner la terre autour du soleil
+  g.rootMars.rotateY(r*23);
+  	g.mars.rotateY(r*20);	
+  g.rootJupiter.rotateY(r*21);
+  	g.jupiter.rotateY(r*20);	
+  g.rootSaturne.rotateY(r*19);
+  	g.saturne.rotateY(r*15);
+  g.rootUranus.rotateY(r*16);
+  	g.uranus.rotateY(r*20);	
+  g.rootNeptune.rotateY(r*13);
+  	g.neptune.rotateY(r*30);	
+  g.rootPluto.rotateY(r*10);
+  	g.pluto.rotateY(r*10);	
 
-  g.viewInfo.drawContext.view = g.math.matrix4.lookAt(
-	  [100,1,100],
-      //[x, y, z],  // eye
-      [0, 0, 0],  // target
-      [0, 5, 0]); // up
+// ne pas decomenter: car sinon le scrollMe ne fonctionne pas
+//  g.viewInfo.drawContext.view = g.math.matrix4.lookAt(
+//	  [100,1,100],
+//      //[x, y, z],  // eye
+//      [0, 0, 0],  // target
+//      [0, 5, 0]); // up
 	  
   
 }
@@ -705,7 +732,7 @@ function loadDayTextureSaturne() {
 }
 
 function loadDayTextureUranus() {
-	  loadTexture('textures/saturnmap.jpg', function(texture) {
+	  loadTexture('textures/uranusmap.jpg', function(texture) {
 	      g.daySamplerUranus.texture = texture;
 	      g.uranusPrimitive.material = g.dayOnlyMaterialUranus;
 	      g.flatToDayCounter.running = true;
