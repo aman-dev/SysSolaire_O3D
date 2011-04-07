@@ -10,6 +10,7 @@ o3djs.require('o3djs.debug');
 o3djs.require('o3djs.math');
  
 var g = {
+  keyPressDelta:0.05,
   clock:0,
   framesRendered:0,
   timeMult:1.0,  
@@ -31,9 +32,72 @@ var sun;
 var moon; 
 var g_math;
 
-
 var earth_rot;
 var root_earth;
+
+
+/**
+ * Function performing the rotate action in response to a key-press.
+ * Rotates the scene based on key pressed. (w ,s, a, d). Note that the
+ * x, y-axis referenced here are relative to the current view of scene.
+ * @param {keyPressed} The letter pressed, in lower case.
+ * @param {delta} The angle by which the scene should be rotated.
+ * @return true if an action was taken.
+ */
+function keyPressedAction(keyPressed, delta) {
+  var actionTaken = false;
+  switch(keyPressed) {
+    case 'a':
+
+      g.rootMain.localMatrix =
+          g.math.matrix4.mul(g.rootMain.localMatrix,
+                             g.math.matrix4.rotationY(-delta));
+      actionTaken = true;
+      break;
+    case 'd':
+    	g.rootMain.localMatrix =
+    		g.math.matrix4.mul(g.rootMain.localMatrix,
+                             g.math.matrix4.rotationY(delta));
+      actionTaken = true;
+      break;
+    case 'w':
+    	g.rootMain.localMatrix =
+    		g.math.matrix4.mul(g.rootMain.localMatrix,
+                             g.math.matrix4.rotationX(-delta));
+      actionTaken = true;
+      break;
+    case 's':
+    	g.rootMain.localMatrix =
+    		g.math.matrix4.mul(g.rootMain.localMatrix,
+                             g.math.matrix4.rotationX(delta));
+      actionTaken = true;
+      break;
+  }
+  return actionTaken;
+}
+
+/**
+ * Callback for the keypress event.
+ * Invokes the action to be performed for the key pressed.
+ * @param {event} keyPress event passed to us by javascript.
+ */
+function keyPressedCallback(event) {
+  event = event || window.event;
+
+  // Ignore accelerator key messages.
+  if (event.metaKey)
+    return;
+
+  var keyChar =String.fromCharCode(o3djs.event.getEventKeyChar(event));
+  // Just in case they have capslock on.
+  keyChar = keyChar.toLowerCase();
+
+  if (keyPressedAction(keyChar, g.keyPressDelta)) {
+    o3djs.event.cancel(event);
+  }
+}    
+
+
 
 function startDragging(e) {
   g.lastRot = g.thisRot;
@@ -528,6 +592,9 @@ function initStep2(clientElements) {
   
    // Setup an onrender callback for animation.
   g.client.setRenderCallback(onrender);
+  
+  //Set up a callback to interpret keypresses
+  window.document.onkeypress = keyPressedCallback;
 }
 
 // spin the camera.
