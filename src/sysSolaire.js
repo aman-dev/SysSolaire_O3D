@@ -47,9 +47,9 @@ function drag(e) {
     var rot_mat = g.quaternions.quaternionToRotation(rotationQuat);
     g.thisRot = g.math.matrix4.mul(g.lastRot, rot_mat);
  
-    var m = g.root.localMatrix;
+    var m = g.rootMain.localMatrix;
     g.math.matrix4.setUpper3x3(m, g.thisRot);
-    g.root.localMatrix = m;
+    g.rootMain.localMatrix = m;
   }
 }
  
@@ -174,6 +174,7 @@ function initStep2(clientElements) {
     "dayOnlyEarth",
     "dayOnlySun",
     "dayOnlyMoon",
+    "dayOnlyMercury",
     "nightAndDay",
     "mask",
     "energy",
@@ -214,10 +215,11 @@ function initStep2(clientElements) {
   g.dayOnlyMaterialEarth	= g.materials[2];
   g.dayOnlyMaterialSun 		= g.materials[3];
   g.dayOnlyMaterialMoon 	= g.materials[4];
+  g.dayOnlyMaterialMercury 	= g.materials[5];
  
   // create samplers
   g.samplers = [];
-  for (var ii = 0; ii < 7; ++ii) {
+  for (var ii = 0; ii < g.materials.length; ++ii) {
     var sampler = g.pack.createObject('Sampler');
     g.samplers[ii] = sampler;
   }
@@ -226,15 +228,17 @@ function initStep2(clientElements) {
   g.daySamplerEarth = g.samplers[1];
   g.daySamplerSun = g.samplers[2];
   g.daySamplerMoon = g.samplers[3];
-  g.nightSampler = g.samplers[4];
-  g.maskSampler = g.samplers[5];
-  g.energySampler = g.samplers[6];
+  g.daySamplerMercury = g.samplers[4];
+  g.nightSampler = g.samplers[5];
+  g.maskSampler = g.samplers[6];
+  g.energySampler = g.samplers[7];
  
   // set the material samplers.
   g.dayOnlyMaterial.getParam('daySampler').value = g.daySampler;
   g.dayOnlyMaterialSun.getParam('daySamplerSun').value = g.daySamplerSun;
   g.dayOnlyMaterialEarth.getParam('daySamplerEarth').value = g.daySamplerEarth;
   g.dayOnlyMaterialMoon.getParam('daySamplerMoon').value = g.daySamplerMoon;
+  g.dayOnlyMaterialMercury.getParam('daySamplerMercury').value = g.daySamplerMercury;
  
   // Create energy texture(s)
   {
@@ -275,7 +279,11 @@ function initStep2(clientElements) {
       g.flatToDayCounter.getParam('count'));
   g.dayOnlyMaterialMoon.getParam('mix').bind(
       g.flatToDayCounter.getParam('count'));
+  g.dayOnlyMaterialMercury.getParam('mix').bind(
+	      g.flatToDayCounter.getParam('count'));
       
+  g.rootMain = g.pack.createObject('Transform');
+  g.rootMain.parent = g.client.root;
       // Create a sphere at the origin for the sun.
   sun = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -305,7 +313,7 @@ function initStep2(clientElements) {
   g.earthPrimitive = earth.elements[0];
   g.earth = g.pack.createObject('Transform');
   g.earth.addShape(earth);
-  g.earth.parent = g.sun;
+  g.earth.parent = g.rootMain;
     // Create a sphere at the origin for the moon.
   moon = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
@@ -320,6 +328,21 @@ function initStep2(clientElements) {
   g.moon.addShape(moon);
   g.moon.parent = g.earth;
 
+  // Create a sphere at the origin for the moon.
+  mercury = o3djs.primitives.createSphere(g.pack,
+                                            g.noTextureMaterial,
+                                            2,
+                                            50,
+                                            50,
+                                            g.math.matrix4.translation([0, 0, 0]));
+											//g.math.matrix4.translation([0, 0, 0]));
+    // Get a the element so we can set its material later.
+  g.mercuryPrimitive = mercury.elements[0];
+  g.mercury = g.pack.createObject('Transform');
+  g.mercury.addShape(moon);
+  g.mercury.parent = g.rootMain;
+
+  
   o3djs.event.addEventListener(g.o3dElement, 'mousedown', startDragging);
   o3djs.event.addEventListener(g.o3dElement, 'mousemove', drag);
   o3djs.event.addEventListener(g.o3dElement, 'mouseup', stopDragging);
@@ -328,6 +351,7 @@ function initStep2(clientElements) {
   loadDayTextureSun();
   loadDayTextureEarth();
   loadDayTextureMoon();
+  loadDayTextureMercury();
   
   //debug
   g_debugHelper = o3djs.debug.createDebugHelper(g.client.createPack(),
@@ -337,7 +361,8 @@ function initStep2(clientElements) {
   //g_debugHelper.addAxes(g.moon);
   
   //placement des planetes
-  g.earth.translate([0,0,80]);
+  g.earth.translate([0,0,100]);
+  g.mercury.translate([0,0,40]);
   
    // Setup an onrender callback for animation.
   g.client.setRenderCallback(onrender);
@@ -354,8 +379,8 @@ function onrender(renderEvent) {
   //var y = Math.sin(g.clock * 0.2) * 100;
   var y = 1;
   var r = Math.sin(0.001);
-  g.earth.rotateY(r*1);	//faire tourner la terre sur elle-même
-  g.sun.rotateY(r*2);	//faire tourner tout le systeme solaire
+  g.earth.rotateY(r*15);	//faire tourner la terre sur elle-mï¿½me
+  g.rootMain.rotateY(r*2);	//faire tourner tout le systeme solaire
   g.moon.rotateY(r*40);	//faire tourner la terre autour du soleil
   g.viewInfo.drawContext.view = g.math.matrix4.lookAt(
 	  [100,1,100],
@@ -399,6 +424,14 @@ function loadDayTextureMoon() {
       g.moonPrimitive.material = g.dayOnlyMaterialMoon;
       g.flatToDayCounter.running = true;
     });
+}
+
+function loadDayTextureMercury() {
+	  loadTexture('textures/crate.jpg', function(texture) {
+	      g.daySamplermercury.texture = texture;
+	      g.mercuryPrimitive.material = g.dayOnlyMaterialMercury;
+	      g.flatToDayCounter.running = true;
+	    });
 }
  
 
