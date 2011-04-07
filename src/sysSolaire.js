@@ -356,7 +356,7 @@ function onrender(renderEvent) {
   var r = Math.sin(0.001);
   g.earth.rotateY(r*1);	//faire tourner la terre sur elle-même
   g.sun.rotateY(r*2);	//faire tourner tout le systeme solaire
-  g.moon.rotateY(r*40);	//faire tourner la terre autour du soleil
+  g.moon.rotateY(r*40);	//faire tourner la lune autour de la terre
   g.viewInfo.drawContext.view = g.math.matrix4.lookAt(
 	  [100,1,100],
       //[x, y, z],  // eye
