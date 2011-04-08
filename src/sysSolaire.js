@@ -626,24 +626,24 @@ function onrender(renderEvent) {
   var r = Math.sin(0.001);
 
   g.rootMain.rotateY(r*2);	//faire tourner tout le systeme solaire
-  g.rootMercury.rotateY(r*31);
+  g.rootMercury.rotateY(r*27);
   	g.mercury.rotateY(r*50);	
-  g.rootVenus.rotateY(r*29);
+  g.rootVenus.rotateY(r*24);
   	g.venus.rotateY(r*50);	
-  g.rootEarth.rotateY(r*26);
+  g.rootEarth.rotateY(r*21);
   	g.earth.rotateY(r*15);	//faire tourner la terre sur elle-m�me
     g.moon.rotateY(r*40);	//faire tourner la terre autour du soleil
-  g.rootMars.rotateY(r*23);
+  g.rootMars.rotateY(r*18);
   	g.mars.rotateY(r*20);	
-  g.rootJupiter.rotateY(r*21);
+  g.rootJupiter.rotateY(r*15);
   	g.jupiter.rotateY(r*20);	
-  g.rootSaturne.rotateY(r*19);
+  g.rootSaturne.rotateY(r*12);
   	g.saturne.rotateY(r*15);
-  g.rootUranus.rotateY(r*16);
+  g.rootUranus.rotateY(r*9);
   	g.uranus.rotateY(r*20);	
-  g.rootNeptune.rotateY(r*13);
+  g.rootNeptune.rotateY(r*6);
   	g.neptune.rotateY(r*30);	
-  g.rootPluto.rotateY(r*10);
+  g.rootPluto.rotateY(r*3);
   	g.pluto.rotateY(r*10);	
 
 // ne pas decomenter: car sinon le scrollMe ne fonctionne pas
