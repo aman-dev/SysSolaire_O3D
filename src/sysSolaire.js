@@ -371,7 +371,7 @@ function initStep2(clientElements) {
   g.dayOnlyMaterialPluto 	= g.materials[12];
   g.energyMaterial 			= g.materials[15];
   g.energyMaterial.drawList = g.viewInfo.zOrderedDrawList;
-  
+  g.atmosphereMaterial 		= g.materials[16];  
 
   // create samplers
   g.samplers = [];
@@ -679,8 +679,24 @@ function initStep2(clientElements) {
 					+ (Math.random() - 0.5) * 10, 1, 1, color);
 		}
 	}
+	
 
-  
+	g.atmosphereState = g.pack.createObject('State');
+	g.atmosphereState.getStateParam('AlphaBlendEnable').value = true;
+	g.atmosphereState.getStateParam('SourceBlendFunction').value = g.o3d.State.BLENDFUNC_SOURCE_ALPHA;
+	g.atmosphereState.getStateParam('DestinationBlendFunction').value = g.o3d.State.BLENDFUNC_INVERSE_SOURCE_ALPHA;
+	g.atmosphereState.getStateParam('ZWriteEnable').value = false;
+	g.atmosphereMaterial.state = g.atmosphereState;
+
+	// Create a sphere at the origin for the atmosphere.
+	var atmosphere = o3djs.primitives.createSphere(g.pack,
+			g.atmosphereMaterial, 26, 50, 50);
+	g.atmospherePrimitive = atmosphere.elements[0];
+	g.atmospherePrimitive.priority = 1;
+	g.atmosphere = g.pack.createObject('Transform');
+	g.atmosphere.addShape(atmosphere);
+	g.atmosphere.parent = g.root;
+	  
   
   o3djs.event.addEventListener(g.o3dElement, 'mousedown', startDragging);
   o3djs.event.addEventListener(g.o3dElement, 'mousemove', drag);

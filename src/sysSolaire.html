@@ -3,7 +3,7 @@
 <html> 
 <head> 
 <title> 
-Système Solaire
+Systeme Solaire en O3D
 </title> 
 <style> 
   html, body {
@@ -249,7 +249,8 @@ float4 psMain(v2f IN): COLOR {
   float3 earth = tex2D(daySamplerSun, IN.uv).xyz;
   float3 day = lerp(float3(0.5, 0.5, 1.0), earth, mix);
   day = day * litR.y + float3(1,1,1) * litR.z;
-  float3 night = lerp(float3(0.2, 0.2, 0.5), earth * 0.3, mix);
+//  float3 night = lerp(float3(0.2, 0.2, 0.5), earth * 0.3, mix);
+  float3 night = lerp(float3(0.2, 0.2, 0.5), earth * 1.0, mix);
   return float4(lerp(night, day, dayNight),1);
 }
  
@@ -1012,7 +1013,8 @@ v2f vsMain(a2v IN) {
  
 float4 psMain(v2f IN): COLOR {
   float n = 1 - log(2 * normalize(IN.normal).z);
-  return float4(0.3, 0.3, 1, n * n * n * n);
+// return float4(255, 255, 51, n * n * n * n);
+  return float4(255, 255, 51, n*n*n*n*n*n*n*n*n);
 }
  
 // #o3d VertexShaderEntryPoint vsMain
