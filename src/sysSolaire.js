@@ -169,7 +169,84 @@ function setClientSize() {
 function onRender() {
   setClientSize();
 }
+
+function createEnergyShape(pack, material, width, height) {
+	  var vertexInfo = o3djs.primitives.createVertexInfo();
+	  var positionStream = vertexInfo.addStream(
+	      3, g.o3d.Stream.POSITION);
+	  var normalStream = vertexInfo.addStream(
+	      3, g.o3d.Stream.NORMAL);
+	  var colorStream = vertexInfo.addStream(
+	      4, g.o3d.Stream.COLOR);
+	  var texCoordStream = vertexInfo.addStream(
+	      2, g.o3d.Stream.TEXCOORD, 0);
+	 
+	  var vScale = 1;
+	  positionStream.addElement(width * -0.5, height, 0);
+	  normalStream.addElement(0, 0, 1);
+	  colorStream.addElement(1, 1, 1, 0);
+	  texCoordStream.addElement(0, 0);
+	  positionStream.addElement(width *  0.5, height, 0);
+	  normalStream.addElement(0, 0, 1);
+	  colorStream.addElement(1, 1, 1, 0);
+	  texCoordStream.addElement(1, 0);
+	  positionStream.addElement(width * -0.5, 0, 0);
+	  normalStream.addElement(0, 0, 1);
+	  colorStream.addElement(1, 1, 1, 1);
+	  texCoordStream.addElement(0, vScale);
+	  positionStream.addElement(width *  0.5, 0, 0);
+	  normalStream.addElement(0, 0, 1);
+	  colorStream.addElement(1, 1, 1, 1);
+	  texCoordStream.addElement(1, vScale);
+	  positionStream.addElement(0, height, width * -0.5);
+	  normalStream.addElement(1, 0, 0);
+	  colorStream.addElement(1, 1, 1, 0);
+	  texCoordStream.addElement(0, 0);
+	  positionStream.addElement(0, height, width *  0.5);
+	  normalStream.addElement(1, 0, 0);
+	  colorStream.addElement(1, 1, 1, 0);
+	  texCoordStream.addElement(1, 0);
+	  positionStream.addElement(0, 0, width * -0.5);
+	  normalStream.addElement(1, 0, 0);
+	  colorStream.addElement(1, 1, 1, 1);
+	  texCoordStream.addElement(0, vScale);
+	  positionStream.addElement(0, 0, width *  0.5);
+	  normalStream.addElement(1, 0, 0);
+	  colorStream.addElement(1, 1, 1, 1);
+	  texCoordStream.addElement(1, vScale);
+	 
+	  vertexInfo.addTriangle(0, 1, 2);
+	  vertexInfo.addTriangle(1, 2, 3);
+	  vertexInfo.addTriangle(4, 5, 6);
+	  vertexInfo.addTriangle(5, 6, 7);
+	 
+	  return vertexInfo.createShape(pack, material);
+	}
  
+//A geo is a float where the integer part is in degrees and the fractional
+//part is in 60ths
+function geoToRad(geo) {
+	var sign = geo >= 0 ? 1 : -1;
+	geo = Math.abs(geo);
+	var integerPart = Math.floor(geo);
+	var fractionalPart = (geo % 1) * 100;
+	fractionalPart = fractionalPart / 60;
+	return g.math.degToRad(integerPart + fractionalPart);
+}
+
+function addEnergyShard(latitude, longitude, energy, height, color) {
+	  var transform = g.pack.createObject('Transform');
+	  transform.rotateZ(geoToRad(latitude));
+	  transform.rotateY(geoToRad(-longitude));
+	  transform.rotateZ(g.math.degToRad(90));
+	  transform.translate(0, g.EARTH_RADIUS, 0);
+	  transform.parent = g.root;
+	  transform.addShape(g.energyShape);
+	  transform.createParam('colorMult', 'ParamFloat4').value = color;
+	  transform.createParam('offset', 'ParamFloat').value = Math.random();
+	  return transform;
+}
+
 /**
  * Creates the client area.
  */
@@ -292,6 +369,8 @@ function initStep2(clientElements) {
   g.dayOnlyMaterialUranus 	= g.materials[10];
   g.dayOnlyMaterialNeptune 	= g.materials[11];
   g.dayOnlyMaterialPluto 	= g.materials[12];
+  g.energyMaterial 			= g.materials[15];
+  g.energyMaterial.drawList = g.viewInfo.zOrderedDrawList;
   
 
   // create samplers
@@ -331,7 +410,9 @@ function initStep2(clientElements) {
   g.dayOnlyMaterialUranus.getParam('daySamplerUranus').value = g.daySamplerUranus;
   g.dayOnlyMaterialNeptune.getParam('daySamplerNeptune').value = g.daySamplerNeptune;
   g.dayOnlyMaterialPluto.getParam('daySamplerPluto').value = g.daySamplerPluto;
- 
+  g.energyMaterial.getParam('energySampler').value = g.energySampler;
+  
+  
   // Create energy texture(s)
   {
     var dots = [ 0, 1, 0, 1, 0, 0, 1, 0,
@@ -358,11 +439,19 @@ function initStep2(clientElements) {
   }
  
   // Setup counters to fade in textures.
-  g.flatToDayCounter = g.pack.createObject('SecondCounter');
+  g.shardCounter = g.pack.createObject('SecondCounter');
+  g.shardCounter.multiplier = 0.1;
+  g.energyMaterial.getParam('time').bind(
+      g.shardCounter.getParam('count'));
+   g.energyMaterial.getParam('time').bind(
+	      g.shardCounter.getParam('count'));
+ 
+   g.flatToDayCounter = g.pack.createObject('SecondCounter');
   g.flatToDayCounter.end = 1;
   g.flatToDayCounter.multiplier = 0.5;
   g.flatToDayCounter.countMode = g.o3d.Counter.ONCE;
   g.flatToDayCounter.running = false;
+
   g.dayOnlyMaterial.getParam('mix').bind(
       g.flatToDayCounter.getParam('count'));
   g.dayOnlyMaterialSun.getParam('mix').bind(
@@ -397,7 +486,7 @@ function initStep2(clientElements) {
       // Create a sphere at the origin for the sun.
   sun = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
-                                            10,
+                                            25,
                                             50,
                                             50,
                                             g.math.matrix4.translation([0, 0, 0]));
@@ -568,6 +657,29 @@ function initStep2(clientElements) {
   g.pluto.addShape(pluto);
   g.pluto.parent = g.rootPluto;
   
+  
+
+	g.energyShape = createEnergyShape(g.pack, g.energyMaterial, g.ENERGY_WIDTH,
+			g.ENERGY_HEIGHT);
+
+	addEnergyShard(0, 0, 1, 1, [ 1, 1, 1, 1 ]);
+
+	// Honolulu, Hawaii, 21, 18, 157, 50
+	addEnergyShard(21.18, 157.50, 1, 1, [ 0, 1, 0, 1 ]);
+	// San Francisco, Calif. 37 47 122 26
+	addEnergyShard(37.47, 122.26, 1, 1, [ 1, 0.5, 0.5, 1 ]);
+
+	for ( var ii = 0; ii < 24; ++ii) {
+		var longitude = Math.random() * 360;
+		var latitude = Math.random() * 360 - 180;
+		var color = [ Math.random() * 0.5 + 0.2, Math.random() * 0.5 + 0.2,
+				Math.random() * 0.5 + 0.2, 1 ];
+		for ( var jj = 0; jj < 24; ++jj) {
+			addEnergyShard(latitude + (Math.random() - 0.5) * 10, longitude
+					+ (Math.random() - 0.5) * 10, 1, 1, color);
+		}
+	}
+
   
   
   o3djs.event.addEventListener(g.o3dElement, 'mousedown', startDragging);
