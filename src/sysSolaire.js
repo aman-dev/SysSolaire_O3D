@@ -10,12 +10,23 @@ o3djs.require('o3djs.debug');
 o3djs.require('o3djs.math');
  
 var g = {
-  keyPressDelta:0.05,
-  clock:0,
-  framesRendered:0,
-  timeMult:1.0,  
-  EARTH_RADIUS: 25,
-  ENERGY_WIDTH: 0.5,
+  keyPressDelta   :0.05,
+  clock           :0,
+  framesRendered  :0,
+  timeMult        :1.0,
+  sun_size        :50,
+  mercury_size    :1.21,
+  venus_size	   :3.026,
+  earth_size	   :3.18,
+  mars_size       :1.6985,
+  jupiter_size    :35.75,
+  saturne_size    :30.165,	
+  uranus_size	   :12.78,
+  neptune_size    :12.5,
+  pluto_size	   :3.87,
+  moon_size       :0.87,
+  EARTH_RADIUS    :25,
+  ENERGY_WIDTH    :0.5,
   ENERGY_HEIGHT: 45
 };
  
@@ -27,27 +38,6 @@ g.camera = {
 var g_finished = false;  // for selenium.
 var dragging = false;
  
-/*var earth;
-var sun; 
-var moon; */
-var g_math;
-
-var earth_rot;
-var root_earth;
-
-//pour les tailles
-var sun_size 	 = 50;
-var mercury_size = 1.21;
-var venus_size	 = 3.026;
-var earth_size	 = 3.18;
-var mars_size    = 1.6985;
-var jupiter_size = 35.75;	
-var saturne_size = 30.165;	
-var uranus_size	 = 12.78;
-var neptune_size = 12.5;
-var pluto_size	 = 0.55;
-var moon_size    = 0.87;
-
 
 /**
  * Function performing the rotate action in response to a key-press.
@@ -316,7 +306,7 @@ function initStep2(clientElements) {
  
   g.aball = o3djs.arcball.create(100, 100);
   setClientSize();
-  g.client.setRenderCallback(onRender);
+  //g.client.setRenderCallback(onRender);
  
  
   // Create Materials.
@@ -491,16 +481,13 @@ function initStep2(clientElements) {
 	      g.flatToDayCounter.getParam('count'));
 
   
-  
-  
-  
   g.rootMain = g.pack.createObject('Transform');
   g.rootMain.parent = g.client.root;
       // Create a sphere at the origin for the sun.
   sun = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
 
-                                            sun_size,
+                                            g.sun_size,
                                             50,
                                             50,
                                             g.math.matrix4.translation([0, 0, 0]));
@@ -520,7 +507,7 @@ function initStep2(clientElements) {
   earth = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
 
-                                            earth_size,
+                                            g.earth_size,
                                             50,
                                             50,
                                             //g.math.matrix4.translation([50, 0, 0]));
@@ -534,10 +521,10 @@ function initStep2(clientElements) {
   moon = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
 
-                                            moon_size,
+                                            g.moon_size,
                                             50,
                                             50,
-                                            g.math.matrix4.translation([earth_size+2, 0, 0]));
+                                            g.math.matrix4.translation([g.earth_size+2, 0, 0]));
 											//g.math.matrix4.translation([0, 0, 0]));
     // Get a the element so we can set its material later.
   g.moonPrimitive = moon.elements[0];
@@ -555,7 +542,7 @@ function initStep2(clientElements) {
   mercury = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
 
-                                            mercury_size,
+                                            g.mercury_size,
                                             50,
                                             50,
                                             g.math.matrix4.translation([0, 0, 0]));
@@ -572,7 +559,7 @@ function initStep2(clientElements) {
   venus = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
 
-                                            venus_size,
+                                           g.venus_size,
                                             50,
                                             50,
                                             g.math.matrix4.translation([0, 0, 0]));
@@ -589,7 +576,7 @@ function initStep2(clientElements) {
   mars = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
 
-                                            mars_size,
+                                            g.mars_size,
                                             50,
                                             50,
                                             g.math.matrix4.translation([0, 0, 0]));
@@ -606,7 +593,7 @@ function initStep2(clientElements) {
   jupiter = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
 
-                                            jupiter_size,
+                                            g.jupiter_size,
                                             50,
                                             50,
                                             g.math.matrix4.translation([0, 0, 0]));
@@ -623,7 +610,7 @@ function initStep2(clientElements) {
   saturne = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
 
-                                            saturne_size,
+                                            g.saturne_size,
                                             50,
                                             50,
                                             g.math.matrix4.translation([0, 0, 0]));
@@ -640,7 +627,7 @@ function initStep2(clientElements) {
   uranus = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
 
-                                            uranus_size,
+                                            g.uranus_size,
                                             50,
                                             50,
                                             g.math.matrix4.translation([0, 0, 0]));
@@ -657,7 +644,7 @@ function initStep2(clientElements) {
   neptune = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
 
-                                            neptune_size,
+                                            g.neptune_size,
                                             50,
                                             50,
                                             g.math.matrix4.translation([0, 0, 0]));
@@ -674,7 +661,7 @@ function initStep2(clientElements) {
   pluto = o3djs.primitives.createSphere(g.pack,
                                             g.noTextureMaterial,
 
-                                            pluto_size,
+                                            g.pluto_size,
                                             50,
                                             50,
                                             g.math.matrix4.translation([0, 0, 0]));
@@ -685,7 +672,7 @@ function initStep2(clientElements) {
   g.pluto.addShape(pluto);
   g.pluto.parent = g.rootPluto;
   
-  
+  updateViewFromCamera();
 
 	g.energyShape = createEnergyShape(g.pack, g.energyMaterial, g.ENERGY_WIDTH,
 			g.ENERGY_HEIGHT);
@@ -725,6 +712,7 @@ function initStep2(clientElements) {
 	g.atmosphere.addShape(atmosphere);
 	g.atmosphere.parent = g.root;
 	  
+  updateViewFromCamera();
   
   o3djs.event.addEventListener(g.o3dElement, 'mousedown', startDragging);
   o3djs.event.addEventListener(g.o3dElement, 'mousemove', drag);
@@ -759,31 +747,32 @@ function initStep2(clientElements) {
   g.saturne.translate([320,0,250]);
   g.uranus.translate([484,0,-600]);
   g.neptune.translate([-840,0,600]);
-  g.pluto.translate([1000,0,1616]); 
+  g.pluto.translate([845,0,-600]); 
 
 
-   // Setup an onrender callback for animation.
-  g.client.setRenderCallback(onrender);
-  
   //Set up a callback to interpret keypresses
   window.document.onkeypress = keyPressedCallback;
+  updateViewFromCamera();
+
+  // Setup an onrender callback for animation.
+  g.client.setRenderCallback(onrender);
+
 }
 
 // spin the camera.
 function onrender(renderEvent) {
+  setClientSize();
   g.framesRendered++;
   // Get the number of seconds since the last render.
   var elapsedTime = renderEvent.elapsedTime;
   g.clock += elapsedTime * g.timeMult;
   var x = Math.sin(g.clock * 0.1) * 100;
   var z = Math.cos(g.clock * 0.1) * 100;
-
   var y = 1;
-
-
-
-  var r = 0.02;	//rotation planete-soleil
-  var tr = 0.01; //rotation planete sur elle meme
+  //var r = Math.sin(0.001);
+  
+  const r = 0.02;	//rotation planete-soleil
+  const tr = 0.01; //rotation planete sur elle meme
   g.rootMercury.rotateY(r*1);
   	g.mercury.rotateY(tr*0.01);	
   g.rootVenus.rotateY(r*0.38);
